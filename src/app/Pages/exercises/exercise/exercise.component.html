@@ -1,0 +1,53 @@
+<div class="container">
+    <div class="row mb-4">
+      <div class="col">
+        <a routerLink="/exercise" class="btn btn-outline-secondary mb-3">
+          &larr; Back to Exercises
+        </a>
+
+        @if (exercise) {
+        <div class="card shadow-sm">
+          <div class="card-header bg-light">
+            <h1 class="h3 mb-0">{{ exercise.title }}</h1>
+          </div>
+          <div class="card-body">
+            <p class="lead">{{ exercise.description }}</p>
+
+            <div class="mb-4">
+              <h2 class="h5">How to Practice:</h2>
+              <ol class="list-group list-group-numbered mb-3">
+                @for (step of exercise.steps; track $index) {
+                <li class="list-group-item">{{ step }}</li>
+                }
+              </ol>
+              <p>
+                <strong>Duration:</strong> {{ exercise.duration }} minute{{
+                  exercise.duration > 1 ? 's' : ''
+                }}
+              </p>
+            </div>
+
+            @if (!timerActive) {
+            <button class="btn btn-primary" (click)="startTimer()">
+              Start Exercise Timer
+            </button>
+            } @else {
+            <div class="text-center mb-3">
+              <h3 class="display-4">{{ displayTime }}</h3>
+              <p>Take this time to focus on your practice</p>
+            </div>
+            <button class="btn btn-secondary" (click)="stopTimer()">
+              End Early
+            </button>
+            }
+          </div>
+        </div>
+        } @else {
+        <div class="alert alert-warning">
+          Exercise not found.
+          <a routerLink="/exercise">View all exercises</a>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
