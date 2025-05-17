@@ -1,1 +1,124 @@
-<p>journal works!</p>
+<!-- Side-by-side layout for Form and Entry List -->
+<div class="row">
+  <!-- Entry Form on the Left -->
+  <div class="col-md-6 mb-5">
+    <div class="card shadow-sm">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0">{{ formTitle }}</h2>
+        <button *ngIf="isEditing" class="btn btn-outline-secondary btn-sm" (click)="cancelEdit()">
+          Cancel Editing
+        </button>
+      </div>
+      <div class="card-body">
+        <form (ngSubmit)="submitForm()" #journalForm="ngForm">
+          <div class="mb-3">
+            <label for="journalTitle" class="form-label">Title</label>
+            <input
+              type="text"
+              class="form-control"
+              id="journalTitle"
+              placeholder="Entry title"
+              [(ngModel)]="formEntry.title"
+              name="title"
+              required
+            >
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Select your mood</label>
+            <div class="d-flex justify-content-between flex-wrap">
+              <div class="form-check form-check-inline mb-2" *ngFor="let mood of moods">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="moodEmoji"
+                  [id]="mood.label"
+                  [value]="mood.label"
+                  [(ngModel)]="formEntry.moodEmoji"
+                  required
+                />
+                <label class="form-check-label" [for]="mood.label">
+                  {{ mood.emoji }} {{ mood.label }}
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="journalContent" class="form-label">Journal Content</label>
+            <textarea
+              class="form-control"
+              id="journalContent"
+              rows="3"
+              placeholder="What's on your mind today?"
+              [(ngModel)]="formEntry.content"
+              name="content"
+              required
+            ></textarea>
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="!journalForm.form.valid || isSubmitting"
+          >
+            {{ submitButtonLabel }}
+          </button>
+
+          <button
+            *ngIf="isEditing"
+            type="button"
+            class="btn btn-outline-secondary ms-2"
+            (click)="cancelEdit()"
+          >
+            Cancel
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Journal Entry List on the Right -->
+  <div class="col-md-6">
+    <h3 class="mb-3">Previous Entries</h3>
+
+    <div *ngIf="journalService.journalEntries().length === 0; else entryList">
+      <p class="text-center text-muted">
+        No journal entries yet. Start tracking your mood today!
+      </p>
+    </div>
+
+    <ng-template #entryList>
+      <div class="card mb-3 shadow-sm" *ngFor="let entry of journalService.journalEntries(); let i = index; trackBy: trackById">
+        <div
+          class="card-header d-flex justify-content-between align-items-center text-white"
+          [ngClass]="{
+            'bg-success': entry.moodEmoji === 'Happy',
+            'bg-danger': entry.moodEmoji === 'Angry',
+            'bg-primary': entry.moodEmoji === 'Excited',
+            'bg-warning text-dark': entry.moodEmoji === 'Anxious',
+            'bg-info text-dark': entry.moodEmoji === 'Calm',
+            'bg-secondary': entry.moodEmoji === 'Sad'
+          }"
+        >
+          <h5 class="mb-0">{{ entry.title }}</h5>
+          <div>
+            <button class="btn btn-link text-light p-0 me-2" (click)="onDeleteEntry(entry.id)" title="Delete entry">
+              <i class="bi bi-trash"></i>
+            </button>
+            <button class="btn btn-link text-light p-0 me-2" (click)="editEntry(entry)" title="Edit entry">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <span class="badge bg-light text-dark">
+              {{ getMoodEmoji(entry.moodEmoji) }} {{ entry.moodEmoji }}
+            </span>
+            <small class="ms-2 text-white-50">{{ entry.createdAt | date: 'medium' }}</small>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="card-text">{{ entry.content }}</p>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</div>

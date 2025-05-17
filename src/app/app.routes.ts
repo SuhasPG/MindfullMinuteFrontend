@@ -7,6 +7,7 @@ import { RegisterComponent } from './Pages/register/register.component';
 import { ExerciseListComponent } from './Pages/exercises/exercise-list/exercise-list.component';
 import { ExerciseComponent } from './Pages/exercises/exercise/exercise.component';
 import { NotfoundComponent } from './Pages/notfound/notfound.component';
+import { authGuard } from './Services/auth/auth.guard';
 export const routes: Routes = [
     {
         path:'login',
@@ -21,25 +22,27 @@ export const routes: Routes = [
     {
         path: '', 
         component: LayoutComponent,
+        canActivateChild: [authGuard], 
         children: [
-            {
-                path: 'dashboard',
-                component: DashboardComponent,
-            },
-            {
-                path: 'exercise',
-                component: ExerciseListComponent
-            },
-            {
-                path: 'exercise/:id',
-                component: ExerciseComponent
-            },
-            {
-                path: 'journal',
-                component: JournalComponent
-            },
+          {
+            path: 'dashboard',
+            component: DashboardComponent,
+          },
+          {
+            path: 'exercise',
+            component: ExerciseListComponent
+          },
+          {
+            path: 'exercise/:id',
+            component: ExerciseComponent
+          },
+          {
+            path: 'journal',
+            component: JournalComponent
+          },
         ]
-    },
+      },
+      
     {
         path: '404',
         component: NotfoundComponent,

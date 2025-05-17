@@ -1,8 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+// login.component.ts for Angular 18
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../Services/auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -19,8 +20,13 @@ export class LoginComponent implements OnInit {
   showPassword = false;
   submitted = false;
   rememberMe = false;
+  returnUrl: string = '/dashboard';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private authService: AuthService, 
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     // Check if there's a saved email in localStorage for "remember me" functionality
@@ -28,6 +34,14 @@ export class LoginComponent implements OnInit {
     if (savedEmail) {
       this.email = savedEmail;
       this.rememberMe = true;
+    }
+    
+    // Get return url from route parameters or default to '/dashboard'
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+    
+    // Redirect if already logged in
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate([this.returnUrl]);
     }
   }
 
@@ -67,23 +81,17 @@ export class LoginComponent implements OnInit {
       localStorage.removeItem('rememberedEmail');
     }
 
-    console.log('Email:', this.email);
-    const loginData = {
-      email: this.email,
-      password: this.password
-    };
-
-    this.http.post<any>('https://localhost:7026/login', loginData).subscribe({
+    // Use AuthService for login
+    this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
         console.log('Login successful:', response);
-        localStorage.setItem('token', response.accessToken);
         this.loading = false;
-        // Navigate to the dashboard
-        this.router.navigate(['dashboard']);
+        // Navigate to the return URL or dashboard
+        this.router.navigate([this.returnUrl]);
       },
       error: (error) => {
         console.error('Login failed:', error);
-        this.errorMessage = 'Invalid email or password';
+        this.errorMessage = error.message || 'Invalid email or password';
         this.loading = false;
       }
     });

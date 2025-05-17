@@ -24,9 +24,10 @@ export class QuoteService {
   private currentQuoteSignal = signal<Quote | null>(null);
   currentQuote: Signal<Quote | null> = this.currentQuoteSignal.asReadonly();
 
-    constructor(private http: HttpClient, private router: Router) {
+    constructor(private http: HttpClient) {
         this.http.get<Quote[]>('https://localhost:7026/api/Quotes').subscribe((data) => {
                 this.quotes = [...this.quotes, ...data];
+                console.log(this.quotes);
                 // Set the daily quote if it hasn't been set yet
                 const lastQuoteDate = localStorage.getItem('lastQuoteDate');
                 if (!lastQuoteDate) {
