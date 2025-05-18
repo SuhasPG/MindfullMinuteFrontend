@@ -24,6 +24,7 @@ export class JournalComponent {
     { label: 'Anxious', emoji: '😰', colorClass: 'bg-warning text-dark' },
     { label: 'Excited', emoji: '🤩', colorClass: 'bg-primary' },
     { label: 'Calm', emoji: '😌', colorClass: 'bg-info text-dark' },
+    { label: 'Unknown', emoji: '❓', colorClass: 'bg-dark' }, // Changed emoji to question mark
   ];
 
   formEntry: JournalPost = {

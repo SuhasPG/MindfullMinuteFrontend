@@ -1,14 +1,14 @@
 <div class="container">
     <div class="row mb-4">
       <div class="col">
-        <a routerLink="/exercise" class="btn btn-outline-secondary mb-3">
+        <a routerLink="/exercise" class="btn btn-outline-danger mb-3">
           &larr; Back to Exercises
         </a>
 
         @if (exercise) {
         <div class="card shadow-sm">
-          <div class="card-header bg-light">
-            <h1 class="h3 mb-0">{{ exercise.title }}</h1>
+          <div class="card-header bg-dark text-light">
+            <h1 class="h3 mb-0 ">{{ exercise.title }}</h1>
           </div>
           <div class="card-body">
             <p class="lead">{{ exercise.description }}</p>
@@ -36,7 +36,7 @@
               <h3 class="display-4">{{ displayTime }}</h3>
               <p>Take this time to focus on your practice</p>
             </div>
-            <button class="btn btn-secondary" (click)="stopTimer()">
+            <button class="btn btn-danger" (click)="stopTimer()">
               End Early
             </button>
             }

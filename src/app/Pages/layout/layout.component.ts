@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from '../../Services/auth/auth.service';
+import { JournalService } from '../../Services/journal.service';
 
 @Component({
   selector: 'app-layout',
@@ -10,16 +11,7 @@ import { AuthService } from '../../Services/auth/auth.service';
   styleUrl: './layout.component.css'
 })
 export class LayoutComponent {
-  // isTokenPresent: boolean = false;
-
-  // constructor(private router: Router) {
-  //   this.isTokenPresent = !!localStorage.getItem('access_token');
-  // }
-
-  // onLogout() {
-  //   localStorage.removeItem('access_token');
-  //   this.isTokenPresent = false;
-  //   this.router.navigate(['/login']);
-  // }
+  
   authService = inject(AuthService);
+  journalService = inject(JournalService);
 }

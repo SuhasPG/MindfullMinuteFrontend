@@ -1,0 +1,39 @@
+.journal-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: auto auto auto;
+    gap: 1rem;
+    grid-template-areas:
+      "title form"
+      "streak form"
+      "history history";
+  }
+  
+  .title-box {
+    grid-area: title;
+  }
+  
+  .streak-box {
+    grid-area: streak;
+  }
+  
+  .form-box {
+    grid-area: form;
+  }
+  
+  .history-box {
+    grid-area: history;
+  }
+  
+  /* Responsive fallback */
+  @media (max-width: 768px) {
+    .journal-grid {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "title"
+        "streak"
+        "form"
+        "history";
+    }
+  }
+  
