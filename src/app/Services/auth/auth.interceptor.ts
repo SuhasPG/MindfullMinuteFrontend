@@ -40,7 +40,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
 function isAuthRequest(request: HttpRequest<any>): boolean {
   const url = request.url.toLowerCase();
-  return url.includes('/login') || url.includes('/refresh-token'); 
+  return url.includes('/login') || url.includes('/refresh'); 
 }
 
 function addTokenToRequest(

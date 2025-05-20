@@ -85,7 +85,7 @@ export class AuthService {
     }
 
     return new Observable<AuthResponse>(observer => {
-      this.http.post<AuthResponse>(`${this.API_URL}/refresh-token`, { refreshToken })
+      this.http.post<AuthResponse>(`${this.API_URL}/refresh`, { refreshToken })
         .subscribe({
           next: (response) => {
             this.setSession(response);
@@ -118,6 +118,7 @@ export class AuthService {
   private setSession(authResult: AuthResponse): void {
     
     const expiresAt = Date.now() + authResult.expiresIn * 1000;
+    console.log('Token expires at:', new Date(expiresAt));
     this.tokenExpiryTime = expiresAt;
     
     
