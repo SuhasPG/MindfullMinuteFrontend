@@ -62,6 +62,7 @@ export class AuthService {
       this.http.post<AuthResponse>(`${this.API_URL}/login`, { email, password })
         .subscribe({
           next: (response) => {
+            console.log('Login successful:', response);
             this.setSession(response);
             observer.next(response);
             observer.complete();
