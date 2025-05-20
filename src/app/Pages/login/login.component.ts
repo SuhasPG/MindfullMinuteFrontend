@@ -29,23 +29,23 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Check if there's a saved email in localStorage for "remember me" functionality
+    
     const savedEmail = localStorage.getItem('rememberedEmail');
     if (savedEmail) {
       this.email = savedEmail;
       this.rememberMe = true;
     }
     
-    // Get return url from route parameters or default to '/dashboard'
+    
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
     
-    // Redirect if already logged in
+    
     if (this.authService.isLoggedIn()) {
       this.router.navigate([this.returnUrl]);
     }
   }
 
-  // Toggle password visibility
+  
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }

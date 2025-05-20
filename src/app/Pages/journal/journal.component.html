@@ -61,6 +61,7 @@
               type="submit"
               class="btn btn-primary"
               [disabled]="!journalForm.form.valid || isSubmitting"
+              [style.cursor]="!journalForm.form.valid || isSubmitting ? 'not-allowed' : 'pointer'"
             >
               {{ submitButtonLabel }}
             </button>

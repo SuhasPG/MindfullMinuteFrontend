@@ -30,16 +30,16 @@ export class AuthService {
     }
   }
 
-  login(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.API_URL}/login`, { email, password })
-      .pipe(
-        tap(response => this.setSession(response)),
-        catchError(error => {
-          console.error('Login failed:', error);
-          return throwError(() => new Error('Invalid email or password'));
-        })
-      );
-  }
+  // login(email: string, password: string): Observable<AuthResponse> {
+  //   return this.http.post<AuthResponse>(`${this.API_URL}/login`, { email, password })
+  //     .pipe(
+  //       tap(response => this.setSession(response)),
+  //       catchError(error => {
+  //         console.error('Login failed:', error);
+  //         return throwError(() => new Error('Invalid email or password'));
+  //       })
+  //     );
+  // }
 
   logout(): void {
     // Remove tokens from local storage
@@ -57,23 +57,47 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
+  login(email: string, password: string): Observable<AuthResponse> {
+    return new Observable<AuthResponse>(observer => {
+      this.http.post<AuthResponse>(`${this.API_URL}/login`, { email, password })
+        .subscribe({
+          next: (response) => {
+            this.setSession(response);
+            observer.next(response);
+            observer.complete();
+          },
+          error: (error) => {
+            console.error('Login failed:', error);
+            observer.error(new Error('Invalid email or password'));
+          }
+        });
+    });
+  }
+
   refreshToken(): Observable<AuthResponse> {
     const refreshToken = localStorage.getItem('refresh_token');
     
     if (!refreshToken) {
-      return throwError(() => new Error('No refresh token available'));
+      return new Observable<AuthResponse>(observer => {
+        observer.error(new Error('No refresh token available'));
+      });
     }
 
-    return this.http.post<AuthResponse>(`${this.API_URL}/refresh-token`, { refreshToken })
-      .pipe(
-        tap(response => this.setSession(response)),
-        catchError(error => {
-          console.error('Token refresh failed:', error);
-          // If refresh fails, log the user out
-          this.logout();
-          return throwError(() => new Error('Session expired. Please login again.'));
-        })
-      );
+    return new Observable<AuthResponse>(observer => {
+      this.http.post<AuthResponse>(`${this.API_URL}/refresh-token`, { refreshToken })
+        .subscribe({
+          next: (response) => {
+            this.setSession(response);
+            observer.next(response);
+            observer.complete();
+          },
+          error: (error) => {
+            console.error('Token refresh failed:', error);
+            this.logout();
+            observer.error(new Error('Session expired. Please login again.'));
+          }
+        });
+    });
   }
 
   isLoggedIn(): boolean {
@@ -91,23 +115,23 @@ export class AuthService {
   }
 
   private setSession(authResult: AuthResponse): void {
-    // Calculate expiry time and store it
+    
     const expiresAt = Date.now() + authResult.expiresIn * 1000;
     this.tokenExpiryTime = expiresAt;
     
-    // Store tokens and expiry time
+    
     localStorage.setItem('access_token', authResult.accessToken);
     localStorage.setItem('refresh_token', authResult.refreshToken);
     localStorage.setItem('expires_at', expiresAt.toString());
     
-    // Update authentication state
+    
     this.currentUserSubject.next(true);
     
-    // Set up automatic token refresh
+    
     this.startRefreshTokenTimer();
   }
 
-  // Start timer to refresh token before it expires
+
   private startRefreshTokenTimer(): void {
     // Clear any existing timer
     this.stopRefreshTokenTimer();
